@@ -103,5 +103,5 @@ class HetznerS3Bucket:
         :param data: The data to calculate the checksum for.
         :return: The MD5 checksum as a base64-encoded string.
         """
-        md5_hash = hashlib.md5(data).digest()
+        md5_hash = hashlib.md5(data)
         return md5_hash.hexdigest()
