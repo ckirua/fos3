@@ -1,0 +1,4 @@
+include requirements.txt
+include LICENSE
+recursive-include fos3 *.py
+recursive-include examples *.py
