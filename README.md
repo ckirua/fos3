@@ -14,7 +14,7 @@ pip install .
 **From github**
 
 ```bash
-pip install git+https://github.com/paektec/fos3.git
+pip install git+ssh://git@github.com/paektec/fos3.git
 ```
 
 Select branch or version using:
