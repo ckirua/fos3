@@ -26,5 +26,5 @@ jobs:
         name: python-package-distributions
         path: |
           dist/
-          build/lib/
+          build/lib.*
           build/bdist.*
