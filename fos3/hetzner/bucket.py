@@ -1,3 +1,4 @@
+import base64
 import hashlib
 from typing import Optional
 
@@ -15,6 +16,9 @@ class HetznerS3BucketConfiguration:
         self.host = host
         self.key = key
         self.secret = secret
+
+    def __repr__(self) -> str:
+        return f"HetznerS3BucketConfiguration(host={self.host})"
 
 
 class HetznerS3ClientPool:
@@ -80,7 +84,7 @@ class HetznerS3Bucket:
             Bucket=self._bucket_name,
             Key=key,
             Body=data,
-            ContentMD5=self._calculate_md5(data),  # Optional: Add MD5 checksum
+            ChecksumSHA256=self._calculate_sha256(data),
         )
 
     def delete_object(self, key: str) -> None:
@@ -103,5 +107,14 @@ class HetznerS3Bucket:
         :param data: The data to calculate the checksum for.
         :return: The MD5 checksum as a base64-encoded string.
         """
-        md5_hash = hashlib.md5(data)
-        return md5_hash.hexdigest()
+        return base64.b64encode(hashlib.md5(data).digest()).decode("utf-8")
+
+    @staticmethod
+    def _calculate_sha256(data: bytes) -> str:
+        """
+        Calculates the SHA256 checksum of the data.
+
+        :param data: The data to calculate the checksum for.
+        :return: The SHA256 checksum as a hexadecimal string.
+        """
+        return hashlib.sha256(data).hexdigest()
