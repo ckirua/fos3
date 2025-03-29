@@ -29,7 +29,7 @@ clean:
 	@rm -rf dist/
 	@rm -rf *.egg-info/
 	@find . -type f -name "*.so" -delete
-	@find . -type f -name "*.c" -delete
+	#@find . -type f -name "*.c" -delete
 
 release:
 	make install test
