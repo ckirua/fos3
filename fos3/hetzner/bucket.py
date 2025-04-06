@@ -10,12 +10,13 @@ class HetznerS3BucketConfiguration:
     Configuration class for Hetzner S3 bucket.
     """
 
-    __slots__ = ("host", "key", "secret")
+    __slots__ = ("host", "key", "secret", "region")
 
-    def __init__(self, host: str, key: str, secret: str):
+    def __init__(self, host: str, key: str, secret: str, region: str):
         self.host = host
         self.key = key
         self.secret = secret
+        self.region = region
 
     def __repr__(self) -> str:
         return f"HetznerS3BucketConfiguration(host={self.host})"
@@ -39,7 +40,7 @@ class HetznerS3ClientPool:
         """
         return self._session.client(
             "s3",
-            region_name="fsn1",
+            region_name=self._configuration.region,
             endpoint_url=self._configuration.host,
         )
 
