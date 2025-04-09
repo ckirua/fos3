@@ -2,17 +2,14 @@ import asyncio
 import os
 
 from dotenv import load_dotenv
-from fos3.hetzner import (
-    HetznerS3Bucket,
-    HetznerS3BucketConfiguration,
-    HetznerS3ClientPool,
-)
+from fos3.hetzner import HetznerS3Bucket, HetznerS3ClientPool
+from fos3.s3 import S3BucketParameters
 
 load_dotenv("/root/workspace/.env", override=True)
 
 
-def create_configuration() -> HetznerS3BucketConfiguration:
-    return HetznerS3BucketConfiguration(
+def create_configuration() -> S3BucketParameters:
+    return S3BucketParameters(
         host=(lambda: os.getenv("OBJECT_STORAGE_HOST"))(),
         key=(lambda: os.getenv("OBJECT_STORAGE_KEY"))(),
         secret=(lambda: os.getenv("OBJECT_STORAGE_SECRET"))(),
@@ -20,7 +17,7 @@ def create_configuration() -> HetznerS3BucketConfiguration:
 
 
 def create_pool(
-    configuration: HetznerS3BucketConfiguration,
+    configuration: S3BucketParameters,
 ) -> HetznerS3ClientPool:
     return HetznerS3ClientPool(configuration)
 

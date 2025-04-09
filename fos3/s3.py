@@ -4,6 +4,8 @@ from typing import Optional
 
 import boto3
 
+from .constants import BOTO3_S3_SERVICE_NAME, DEFAULT_ENCODING
+
 
 class S3BucketParameters:
     """
@@ -27,6 +29,8 @@ class S3ClientPool:
     Manages a pool of S3 clients using boto3 Session for efficient resource management.
     """
 
+    __slots__ = ("_configuration", "_session")
+
     def __init__(self, configuration: S3BucketParameters):
         self._configuration = configuration
         self._session = boto3.Session(
@@ -39,7 +43,7 @@ class S3ClientPool:
         Returns a configured S3 client.
         """
         return self._session.client(
-            "s3",
+            BOTO3_S3_SERVICE_NAME,
             region_name=self._configuration.region,
             endpoint_url=self._configuration.host,
         )
@@ -49,6 +53,8 @@ class S3Bucket:
     """
     Provides methods to interact with a S3 bucket.
     """
+
+    __slots__ = ("_bucket_name", "_client_pool")
 
     def __init__(self, bucket_name: str, client_pool: S3ClientPool):
         self._bucket_name = bucket_name
@@ -108,7 +114,9 @@ class S3Bucket:
         :param data: The data to calculate the checksum for.
         :return: The MD5 checksum as a base64-encoded string.
         """
-        return base64.b64encode(hashlib.md5(data).digest()).decode("utf-8")
+        return base64.b64encode(hashlib.md5(data).digest()).decode(
+            DEFAULT_ENCODING
+        )
 
     @staticmethod
     def _calculate_sha256(data: bytes) -> str:

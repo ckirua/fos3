@@ -6,6 +6,8 @@ import pyarrow.csv as pacsv
 import pyarrow.fs as fs
 import pyarrow.parquet as pq
 
+from ..constants import DEFAULT_COMPRESSION
+
 
 def read_csv_bytes(
     content: bytes,
@@ -22,7 +24,12 @@ def read_csv_bytes(
 def write_parquet_table(
     table: pa.Table,
     path: str,
-    filesystem: fs.FileSystem,
-    compression: str = "gzip",
+    filesystem: Optional[fs.FileSystem] = None,
+    compression: Optional[str] = None,
 ):
-    pq.write_table(table, path, filesystem=filesystem, compression=compression)
+    pq.write_table(
+        table,
+        path,
+        filesystem=filesystem,
+        compression=compression or DEFAULT_COMPRESSION,
+    )
