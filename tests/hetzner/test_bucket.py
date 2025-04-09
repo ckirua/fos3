@@ -2,23 +2,22 @@ import hashlib
 import unittest
 from unittest.mock import MagicMock, patch
 
-from fos3.hetzner.bucket import (
-    HetznerS3Bucket,
-    HetznerS3BucketConfiguration,
-    HetznerS3ClientPool,
-)
+from fos3.hetzner.bucket import HetznerS3Bucket, HetznerS3ClientPool
+from fos3.s3 import S3BucketParameters
 
 
-class TestHetznerS3BucketConfiguration(unittest.TestCase):
+class TestS3BucketParameters(unittest.TestCase):
     def test_init(self):
-        config = HetznerS3BucketConfiguration(
+        config = S3BucketParameters(
             host="https://s3.eu-central-1.amazonaws.com",
             key="test_key",
             secret="test_secret",
+            region="fsn1",
         )
         self.assertEqual(config.host, "https://s3.eu-central-1.amazonaws.com")
         self.assertEqual(config.key, "test_key")
         self.assertEqual(config.secret, "test_secret")
+        self.assertEqual(config.region, "fsn1")
 
 
 class TestHetznerS3ClientPool(unittest.TestCase):
@@ -27,10 +26,11 @@ class TestHetznerS3ClientPool(unittest.TestCase):
         mock_client = MagicMock()
         mock_session.return_value.client.return_value = mock_client
 
-        config = HetznerS3BucketConfiguration(
+        config = S3BucketParameters(
             host="https://s3.eu-central-1.amazonaws.com",
             key="test_key",
             secret="test_secret",
+            region="fsn1",
         )
         client_pool = HetznerS3ClientPool(config)
 
@@ -80,7 +80,7 @@ class TestHetznerS3Bucket(unittest.TestCase):
             Bucket="test-bucket",
             Key="test-key",
             Body=data,
-            ContentMD5=self.bucket._calculate_md5(data),
+            ChecksumSHA256=self.bucket._calculate_sha256(data),
         )
 
     def test_put_object_empty_key(self):
@@ -105,14 +105,14 @@ class TestHetznerS3Bucket(unittest.TestCase):
             self.bucket.delete_object("")
         self.assertEqual(str(context.exception), "Key cannot be empty.")
 
-    def test_calculate_md5(self):
+    def test_calculate_sha256(self):
         data = b"test data"
-        # The _calculate_md5 method should return a hexdigest string
-        expected_md5 = hashlib.md5(data).hexdigest()
+        # The _calculate_sha256 method should return a hexdigest string
+        expected_sha256 = hashlib.sha256(data).hexdigest()
 
-        result = self.bucket._calculate_md5(data)
+        result = self.bucket._calculate_sha256(data)
 
-        self.assertEqual(result, expected_md5)
+        self.assertEqual(result, expected_sha256)
 
 
 if __name__ == "__main__":
