@@ -4,19 +4,34 @@ from typing import Optional
 
 import boto3
 
-from ..s3 import S3BucketParameters
+
+class S3BucketParameters:
+    """
+    Configuration class for S3 bucket.
+    """
+
+    __slots__ = ("host", "key", "secret", "region")
+
+    def __init__(self, host: str, key: str, secret: str, region: str):
+        self.host = host
+        self.key = key
+        self.secret = secret
+        self.region = region
+
+    def __repr__(self) -> str:
+        return f"S3BucketParameters(host={self.host})"
 
 
-class HetznerS3ClientPool:
+class S3ClientPool:
     """
     Manages a pool of S3 clients using boto3 Session for efficient resource management.
     """
 
-    def __init__(self, parameters: S3BucketParameters):
-        self._parameters = parameters
+    def __init__(self, configuration: S3BucketParameters):
+        self._configuration = configuration
         self._session = boto3.Session(
-            aws_access_key_id=self._parameters.key,
-            aws_secret_access_key=self._parameters.secret,
+            aws_access_key_id=self._configuration.key,
+            aws_secret_access_key=self._configuration.secret,
         )
 
     def get_client(self) -> boto3.client:
@@ -25,17 +40,17 @@ class HetznerS3ClientPool:
         """
         return self._session.client(
             "s3",
-            region_name=self._parameters.region,
-            endpoint_url=self._parameters.host,
+            region_name=self._configuration.region,
+            endpoint_url=self._configuration.host,
         )
 
 
-class HetznerS3Bucket:
+class S3Bucket:
     """
-    Provides methods to interact with a Hetzner S3 bucket.
+    Provides methods to interact with a S3 bucket.
     """
 
-    def __init__(self, bucket_name: str, client_pool: HetznerS3ClientPool):
+    def __init__(self, bucket_name: str, client_pool: S3ClientPool):
         self._bucket_name = bucket_name
         self._client_pool = client_pool
 
