@@ -13,11 +13,13 @@ def read_csv_bytes(
     content: bytes,
     read_options: Optional[pacsv.ReadOptions] = None,
     convert_options: Optional[pacsv.ConvertOptions] = None,
+    parse_options: Optional[pacsv.ParseOptions] = None,
 ):
     return pacsv.read_csv(
         io.BytesIO(content),
         read_options=read_options,
         convert_options=convert_options,
+        parse_options=parse_options,
     )
 
 
